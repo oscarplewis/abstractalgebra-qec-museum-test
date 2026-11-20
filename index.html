@@ -536,7 +536,7 @@
 
       renderTabs();
       if (!sessionStorage.getItem('alreadyLoaded')) {
-        sessionStorage.setItem('firstLoad', 'true');
+        sessionStorage.setItem('alreadyLoaded', 'true');
       } else {
         exhibitionStage.scrollIntoView({behavior: "smooth"});
       }
