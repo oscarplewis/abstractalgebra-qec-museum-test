@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symmetry &amp; Structure — Group Theory Virtual Museum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0f1115;
+      --bg-surface: #171a21;
+      --bg-elevated: #1f242e;
+      --border-subtle: rgba(235, 224, 204, 0.12);
+      --border-accent: rgba(212, 175, 106, 0.45);
+      --text-primary: #f3efe6;
+      --text-secondary: #b5afa2;
+      --text-muted: #7d786e;
+      --accent-gold: #d4af6a;
+      --accent-gold-soft: rgba(212, 175, 106, 0.14);
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 15% 10%, rgba(212, 175, 106, 0.06), transparent 35%),
+        radial-gradient(circle at 85% 85%, rgba(92, 124, 175, 0.06), transparent 40%);
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 0.6rem;
+    }
+
+    h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(2.1rem, 4vw, 3.2rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .subtitle {
+      max-width: 680px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+    }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .wing-nav-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.9rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .wing-nav-title {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-secondary);
+    }
+
+    .wing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .room-tab {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1.1rem;
+      text-align: left;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      position: relative;
+    }
+
+    .room-tab:hover {
+      background: var(--bg-elevated);
+      border-color: rgba(212, 175, 106, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .room-tab.active {
+      background: var(--bg-elevated);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 1px var(--accent-gold), 0 10px 25px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .room-tab-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .room-number {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .room-tab.active .room-number {
+      color: var(--accent-gold);
+    }
+
+    .group-badge {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.82rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      background: var(--accent-gold-soft);
+      color: var(--accent-gold);
+      border: 1px solid rgba(212, 175, 106, 0.25);
+    }
+
+    .group-badge .katex {
+      font-size: 0.92em;
+      color: inherit;
+    }
+
+    .room-tab-title {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .exhibition-stage {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 24px 50px -15px rgba(0, 0, 0, 0.65);
+    }
+
+    .stage-header {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stage-title-group {
+      max-width: 780px;
+    }
+
+    .stage-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .stage-wing-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .stage-title {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(1.7rem, 3vw, 2.35rem);
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+    }
+
+    .stage-description {
+      color: var(--text-secondary);
+      font-size: 0.96rem;
+    }
+
+    .stage-actions {
+      display: flex;
+      gap: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      font-family: "Inter", sans-serif;
+      font-size: 0.84rem;
+      font-weight: 500;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .btn:hover {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    .btn-primary {
+      background: var(--accent-gold-soft);
+      border-color: var(--border-accent);
+      color: var(--accent-gold);
+    }
+
+    .btn-primary:hover {
+      background: rgba(212, 175, 106, 0.24);
+    }
+
+    .viewport-wrapper {
+      position: relative;
+      width: 100%;
+      height: 68vh;
+      min-height: 480px;
+      max-height: 780px;
+      background: #090a0d;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .viewport-footer {
+      padding: 0.85rem 1.75rem;
+      background: rgba(15, 17, 21, 0.65);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .controls-hint kbd {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      color: var(--text-secondary);
+    }
+
+    .nav-arrows {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem 3rem;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      border-top: 1px solid var(--border-subtle);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 640px) {
+      .stage-header {
+        padding: 1.25rem;
+      }
+      .viewport-wrapper {
+        height: 55vh;
+        min-height: 380px;
+      }
+      .viewport-footer {
+        padding: 0.85rem 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="eyebrow">Math 111A Abstract Algebra &bull; Virtual 3D Exhibition</div>
+    <h1>Quantum Error Correction &amp; The Pauli Group</h1>
+    <p class="subtitle">
+      Explore eight curated virtual rooms illustrating important ideas from quantum computing,
+      quantum error correction, and group theory.
+    </p>
+  </header>
+
+  <main>
+    <div class="wing-nav-header">
+      <span class="wing-nav-title">Select Exhibition Room (8 Wings)</span>
+      <span class="wing-nav-title" id="room-counter">Room 01 / 08</span>
+    </div>
+
+    <nav class="wing-grid" id="wing-grid" aria-label="Exhibition Rooms"></nav>
+
+    <section class="exhibition-stage" aria-live="polite">
+      <div class="stage-header">
+        <div class="stage-title-group">
+          <div class="stage-meta">
+            <span class="stage-wing-label" id="stage-wing">Wing 01</span>
+            <span class="group-badge" id="stage-symbol"></span>
+          </div>
+          <h2 class="stage-title" id="stage-title">1-Qubit Pauli Group</h2>
+          <p class="stage-description" id="stage-description"></p>
+        </div>
+
+        <div class="stage-actions">
+          <button class="btn" id="fullscreen-btn" type="button" title="View 3D gallery in fullscreen">
+            &#x26F6; Fullscreen
+          </button>
+          <a class="btn btn-primary" id="external-link" href="https://www.menel.art" target="_blank" rel="noopener noreferrer">
+            Open in Menel &#x2197;
+          </a>
+        </div>
+      </div>
+
+      <div class="viewport-wrapper" id="viewport-wrapper">
+        <iframe
+          id="menel-frame"
+          src=""
+          title="Menel 3D Gallery Visitor View"
+          allow="fullscreen; xr-spatial-tracking"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <div class="viewport-footer">
+        <div class="controls-hint">
+          Navigate: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or Arrow Keys to walk &bull; Click &amp; drag to look around &bull; Click artworks for details
+        </div>
+        <div class="nav-arrows">
+          <button class="btn" id="prev-room-btn" type="button">&larr; Previous Room</button>
+          <button class="btn" id="next-room-btn" type="button">Next Room &rarr;</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built for our Math 111A Abstract Algebra group project &bull; Powered by Menel 3D Galleries
+  </footer>
+
+  <script>
+    // =========================================================================
+    // CONFIGURE YOUR 8 MENEL ROOMS HERE
+    // Write KaTeX inside $...$ (or $$...$$) in `symbol` and/or `description`.
+    // Remember to double backslashes in JS strings (e.g. "\\mathbb{Z}_n").
+    // =========================================================================
+    const ROOMS = [
+      {
+        number: "01",
+        symbol: String.raw`$\ket{\psi}$`,
+        title: "Quantum Foundations",
+        url: "https://www.menel.art/app/#visit-shared?token=df8c2c0ccf064835a87b76fdb024a3dd",
+        description:
+          "An introduction to important concepts in quantum mechanics and computing."
+      },
+      {
+        number: "02",
+        symbol: String.raw`$latex here$`,
+        title: "Quantum Circuits",
+        url: "https://www.menel.art/g/YOUR-ROOM-2-SLUG",
+        description:
+          "Description"
+      },
+      {
+        number: "03",
+        symbol: String.raw`$latex here$`,
+        title: "1-Qubit Pauli Error Group",
+        url: "https://www.menel.art/g/YOUR-ROOM-3-SLUG",
+        description:
+        "Description"
+      },
+      {
+        number: "04",
+        symbol: String.raw`$latex here$`,
+        title: "$n$-Qubit Pauli Error Group",
+        url: "https://www.menel.art/g/YOUR-ROOM-4-SLUG",
+        description:
+          "Description"
+      },
+      {
+        number: "05",
+        symbol: String.raw`$latex here$`,
+        title: "Bit Flip Correcting Code",
+        url: "https://www.menel.art/g/YOUR-ROOM-5-SLUG",
+        description:
+        "Description"
+      },
+      {
+        number: "06",
+        symbol: String.raw`$latex here$`,
+        title: "Phase Shift Correcting Code",
+        url: "https://www.menel.art/g/YOUR-ROOM-6-SLUG",
+        description:
+        "Description"
+      },
+      {
+        number: "07",
+        symbol: String.raw`$latex here$`,
+        title: "Shor Code",
+        url: "https://www.menel.art/g/YOUR-ROOM-7-SLUG",
+        description:
+        "Description"
+      },
+      {
+        number: "08",
+        symbol: String.raw`$latex here$`,
+        title: "Quantum Metrology",
+        url: "https://www.menel.art/g/YOUR-ROOM-8-SLUG",
+        description:
+        "Description"
+      }
+    ];
+
+    let currentIndex = 0;
+
+    const wingGrid = document.getElementById("wing-grid");
+    const stageWing = document.getElementById("stage-wing");
+    const stageSymbol = document.getElementById("stage-symbol");
+    const stageTitle = document.getElementById("stage-title");
+    const stageDescription = document.getElementById("stage-description");
+    const menelFrame = document.getElementById("menel-frame");
+    const externalLink = document.getElementById("external-link");
+    const roomCounter = document.getElementById("room-counter");
+    const viewportWrapper = document.getElementById("viewport-wrapper");
+
+    function renderMath(el) {
+      if (typeof renderMathInElement === "function") {
+        renderMathInElement(el, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function renderTabs() {
+      wingGrid.innerHTML = "";
+      ROOMS.forEach((room, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "room-tab" + (idx === currentIndex ? " active" : "");
+        btn.setAttribute("aria-pressed", idx === currentIndex ? "true" : "false");
+        btn.innerHTML = `
+          <div class="room-tab-top">
+            <span class="room-number">WING ${room.number}</span>
+            <span class="group-badge">${room.symbol}</span>
+          </div>
+          <div class="room-tab-title">${room.title}</div>
+        `;
+        btn.addEventListener("click", () => selectRoom(idx));
+        wingGrid.appendChild(btn);
+      });
+      renderMath(wingGrid);
+    }
+
+    function selectRoom(index) {
+      currentIndex = (index + ROOMS.length) % ROOMS.length;
+      const room = ROOMS[currentIndex];
+
+      stageWing.textContent = `Wing ${room.number}`;
+      stageSymbol.textContent = room.symbol;
+      stageTitle.textContent = room.title;
+      stageDescription.textContent = room.description;
+      roomCounter.textContent = `Room ${room.number} / ${String(ROOMS.length).padStart(2, "0")}`;
+
+      renderMath(stageSymbol);
+      renderMath(stageDescription);
+
+      menelFrame.src = room.url;
+      menelFrame.title = `${room.title} — Menel 3D Gallery`;
+      externalLink.href = room.url;
+
+      renderTabs();
+      if (!sessionStorage.getItem('firstLoad')) {
+        stageWing.scrollIntoView({behavior: "smooth"});
+        sessionStorage.setItem('firstLoad', 'true');
+      }
+    }
+
+    document.getElementById("prev-room-btn").addEventListener("click", () => {
+      selectRoom(currentIndex - 1);
+    });
+
+    document.getElementById("next-room-btn").addEventListener("click", () => {
+      selectRoom(currentIndex + 1);
+    });
+
+    document.getElementById("fullscreen-btn").addEventListener("click", () => {
+      if (viewportWrapper.requestFullscreen) {
+        viewportWrapper.requestFullscreen();
+      } else if (menelFrame.requestFullscreen) {
+        menelFrame.requestFullscreen();
+      }
+    });
+
+    // Render KaTeX once scripts finish loading even if DOMContentLoaded ran earlier
+    window.addEventListener("load", () => {
+      selectRoom(0);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+    if (!sessionStorage.getItem('hasVisitedSession')) {
+      console.log('First load in this browser tab!');
+      
+      sessionStorage.setItem('hasVisitedSession', 'true');
+    } else {
+      console.log('Page was refreshed or revisited in the same tab.');
+    }
+  });
+  </script>
+</body>
+</html>
