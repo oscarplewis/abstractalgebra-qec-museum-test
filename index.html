@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Symmetry &amp; Structure — Group Theory Virtual Museum</title>
+  <title>Quantum Error Correction</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -352,7 +352,7 @@
 
     <nav class="wing-grid" id="wing-grid" aria-label="Exhibition Rooms"></nav>
 
-    <section class="exhibition-stage" aria-live="polite">
+    <section class="exhibition-stage" id="exhibition-stage-section" aria-live="polite">
       <div class="stage-header">
         <div class="stage-title-group">
           <div class="stage-meta">
@@ -483,6 +483,7 @@
     const externalLink = document.getElementById("external-link");
     const roomCounter = document.getElementById("room-counter");
     const viewportWrapper = document.getElementById("viewport-wrapper");
+    const exhibitionStage = document.getElementById("exhibition-stage-section");
 
     function renderMath(el) {
       if (typeof renderMathInElement === "function") {
@@ -534,9 +535,10 @@
       externalLink.href = room.url;
 
       renderTabs();
-      if (!sessionStorage.getItem('firstLoad')) {
-        stageWing.scrollIntoView({behavior: "smooth"});
+      if (!sessionStorage.getItem('alreadyLoaded')) {
         sessionStorage.setItem('firstLoad', 'true');
+      } else {
+        exhibitionStage.scrollIntoView({behavior: "smooth"});
       }
     }
 
